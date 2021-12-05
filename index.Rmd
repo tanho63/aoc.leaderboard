@@ -13,7 +13,10 @@ I would have liked to time from the moment you download the input and/or from wh
 
 ```{r setup, include = FALSE}
 suppressPackageStartupMessages({
-  library(tidyverse)
+  library(dplyr)
+  library(tidyr)
+  library(lubridate)
+  library(fontawesome)
   library(httr)
   library(reactable)
 })
