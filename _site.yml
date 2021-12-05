@@ -1,0 +1,14 @@
+name: "AOC Leaderboard"
+title: "#rstats AOC Leaderboard"
+description: |
+  An #rstats Advent of Code Leaderboard
+output_dir: "_site"
+navbar:
+  right:
+    - text: "Leaderboard"
+      href: index.html
+    - text: "Advent of Code"
+      href: https://adventofcode.com/2021
+    - text: "Repo"
+      href: https://github.com/tanho63/aoc.leaderboard
+output: distill::distill_article

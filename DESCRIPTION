@@ -1,0 +1,28 @@
+Package: aoc.leaderboard
+Title: rstats AOC Leaderboard
+Version: 0.0.1
+Authors@R: 
+    person("Tan", "Ho", , "tan@tanho.ca", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0001-8388-5155"))
+Description: An rstats leaderboard for Advent of Code
+License: MIT + file LICENSE
+Depends:
+    R (>= 4.1.0)
+Imports: 
+    aoc.elf (>= 0.0.2),
+    distill (>= 1.2),
+    dplyr (>= 1.0.7),
+    httr (>= 1.4.2),
+    jsonlite (>= 1.7.2),
+    lubridate (>= 1.7.0),
+    purrr (>= 0.3.4),
+    rmarkdown (>= 2.11),
+    stringr (>= 1.4.0),
+    tibble (>= 3.1.2),
+    tidyr (>= 1.1.3)
+Remotes:
+    tanho63/aoc.elf
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
