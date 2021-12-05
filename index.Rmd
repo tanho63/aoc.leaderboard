@@ -5,7 +5,7 @@ description: |
 site: distill::distill_website
 ---
 
-Last updated: `r Sys.time()`
+Last updated: `r lubridate::now("EST")` EST
 
 This leaderboard sorts by total number of stars and then by mean time between part one and part two of the puzzles, thereby de-emphasizing the effect of starting the puzzle closer to the midnight EST release time and increase the emphasis on an efficient solution for part two (generally the harder of the two puzzles).
 
