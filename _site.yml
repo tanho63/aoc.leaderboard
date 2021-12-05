@@ -12,3 +12,4 @@ navbar:
     - text: "Repo"
       href: https://github.com/tanho63/aoc.leaderboard
 output: distill::distill_article
+theme: theme.css
