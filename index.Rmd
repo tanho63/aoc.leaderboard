@@ -11,7 +11,7 @@ Last updated: `r lubridate::now("EST")` EST
 
 This leaderboard sorts by total number of stars and then by mean time between part one and part two of the puzzles. 
 
-The goal is to de-emphasize the effect of starting the puzzle closer to the midnight EST release time and in favour of an efficient solution for part two (generally the harder of the two puzzles).
+The goal is to de-emphasize the effect of starting the puzzle closer to the midnight EST release time in favour of an efficient solution for part two (generally the harder of the two puzzles).
 
 In an ideal world I'd have liked to calculate time from when you first download the input or open the puzzle description page, but unfortunately that is not tracked!
 
