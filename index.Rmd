@@ -35,6 +35,8 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ```{r echo = FALSE, layout = "l-page", fig.width = 16, fig.height = 16}
 stars <- httr::GET("https://adventofcode.com/2021/leaderboard/private/view/1032765.json",
+                   httr::accept_json(),
+                   httr::user_agent("rstats aoc leaderboard https://github.com/tanho63/aoc.leaderboard"),
                    httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))) %>% 
   content() %>% 
   as_tibble() %>% 
