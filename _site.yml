@@ -1,7 +1,7 @@
 name: "AOC Leaderboard"
 title: "#rstats AOC Leaderboard"
 description: |
-  An #rstats Advent of Code Leaderboard
+  An #rstats AOC leaderboard sorted by total stars and then by mean time to solve part two.
 output_dir: "_site"
 navbar:
   right:
