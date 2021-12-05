@@ -6,7 +6,7 @@
 # usethis::use_github_action("check-standard") will install it.
 on:
   schedule:
-    cron: 15 * * * *
+    - cron: 23 * * * *
   workflow_dispatch:
 
 name: Build-Site
