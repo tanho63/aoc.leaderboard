@@ -50,6 +50,18 @@ stars <- httr::GET("https://adventofcode.com/2021/leaderboard/private/view/10327
   unnest_longer("completed_stars", indices_include = FALSE) %>% 
   select("user_name","user_id","aoc_score","total_stars","day","star","timestamp"="completed_stars") %>%
   filter(!is.na(star)) %>% 
+  ### The Tungate Tidying
+  mutate(user_id = ifelse(user_name == "andrew-tungate-cms", 1814072, user_id),
+         user_name = ifelse(user_name == "andrew-tungate-cms", "Andrew Tungate", user_name)
+  ) |> 
+  group_by(user_name, user_id, day, star) |> 
+  summarise(
+    aoc_score = min(aoc_score),
+    total_stars = max(total_stars),
+    timestamp = min(timestamp)
+  ) |> 
+  ungroup() |> 
+  ### 
   pivot_wider(names_from = star, values_from = timestamp, names_glue = "star{star}_ts") %>% 
   mutate_at(c("star1_ts","star2_ts"),~ as.numeric(.x) %>% lubridate::as_datetime(tz = "America/Toronto")) %>% 
   mutate(time_to_star2 = (star2_ts-star1_ts) %>% round(1)) %>% 
