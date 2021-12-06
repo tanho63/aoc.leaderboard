@@ -56,16 +56,14 @@ stars <- httr::GET("https://adventofcode.com/2021/leaderboard/private/view/10327
   mutate(user_id = ifelse(user_name == "andrew-tungate-cms", 1814072, user_id),
          user_name = ifelse(user_name == "andrew-tungate-cms", "Andrew Tungate", user_name)
   ) |> 
-  group_by(user_name, user_id, day, star) |> 
-  summarise(
-    aoc_score = min(aoc_score),
-    total_stars = max(total_stars),
-    timestamp = min(timestamp)
-  ) |> 
   group_by(user_name, user_id) |> 
   mutate(
     aoc_score = min(aoc_score),
     total_stars = max(total_stars)
+  ) |> 
+  group_by(user_name, user_id, aoc_score, total_stars, day, star) |> 
+  summarise(
+    timestamp = min(timestamp)
   ) |> 
   ungroup() |> 
   ### 
