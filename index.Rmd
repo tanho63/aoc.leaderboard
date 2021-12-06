@@ -62,6 +62,11 @@ stars <- httr::GET("https://adventofcode.com/2021/leaderboard/private/view/10327
     total_stars = max(total_stars),
     timestamp = min(timestamp)
   ) |> 
+  group_by(user_name, user_id) |> 
+  mutate(
+    aoc_score = min(aoc_score),
+    total_stars = max(total_stars)
+  ) |> 
   ungroup() |> 
   ### 
   pivot_wider(names_from = star, values_from = timestamp, names_glue = "star{star}_ts") %>% 
