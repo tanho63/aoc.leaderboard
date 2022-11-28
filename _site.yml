@@ -5,8 +5,10 @@ description: |
 output_dir: "_site"
 navbar:
   right:
-    - text: "Leaderboard"
+    - text: "2022 Leaderboard"
       href: index.html
+    - text: "2021 Leaderboard"
+      href: 2021.html
     - text: "Advent of Code"
       href: https://adventofcode.com/2021
     - text: "Repo"
