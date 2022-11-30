@@ -34,93 +34,121 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r echo = FALSE, layout = "l-page", fig.width = 16, fig.height = 16}
-stars <- httr::GET("https://adventofcode.com/2022/leaderboard/private/view/1032765.json",
-                   httr::accept_json(),
-                   httr::user_agent("rstats aoc leaderboard https://github.com/tanho63/aoc.leaderboard"),
-                   httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))) %>% 
-  content() %>% 
-  as_tibble() %>% 
-  hoist("members",
-        "user_name"="name",
-        "user_id"="id",
-        "aoc_score"="local_score",
-        "completed_stars"="completion_day_level",
-        "total_stars" = "stars"
-  ) %>% 
-  unnest_longer('completed_stars', indices_to = "day") %>% 
-  unnest_longer("completed_stars", indices_to = "star") %>% 
-  unnest_longer("completed_stars", indices_include = FALSE) %>% 
-  select("user_name","user_id","aoc_score","total_stars","day","star","timestamp"="completed_stars") %>%
-  filter(!is.na(star)) %>% 
-  group_by(user_name, user_id) |> 
-  mutate(
-    aoc_score = min(aoc_score),
-    total_stars = max(total_stars)
-  ) |> 
-  group_by(user_name, user_id, aoc_score, total_stars, day, star) |> 
-  summarise(
-    timestamp = min(timestamp)
-  ) |> 
-  ungroup() |> 
-  ### 
-  pivot_wider(names_from = star, values_from = timestamp, names_glue = "star{star}_ts") %>% 
-  mutate_at(c("star1_ts","star2_ts"),~ as.numeric(.x) %>% lubridate::as_datetime(tz = "America/Toronto")) %>% 
-  mutate(time_to_star2 = (star2_ts-star1_ts) %>% round(1)) %>% 
-  arrange(desc(as.numeric(day))) %>% 
-  select(user_name,total_stars,aoc_score,day,star1_ts,star2_ts,everything())
+get_stars <- function(){
+  stars <- httr::GET("https://adventofcode.com/2022/leaderboard/private/view/1032765.json",
+                     httr::accept_json(),
+                     httr::user_agent("rstats aoc leaderboard https://github.com/tanho63/aoc.leaderboard"),
+                     httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))) %>% 
+    content() %>% 
+    as_tibble() %>% 
+    hoist("members",
+          "user_name"="name",
+          "user_id"="id",
+          "aoc_score"="local_score",
+          "completed_stars"="completion_day_level",
+          "total_stars" = "stars"
+    )
+  
+  if(sum(stars$total_stars) == 0) {
+    message("No stars completed yet!")
+    return(NULL)
+  }
+  
+  stars <- stars |>   
+    unnest_longer('completed_stars', indices_to = "day") %>% 
+    unnest_longer("completed_stars", indices_to = "star") %>% 
+    unnest_longer("completed_stars", indices_include = FALSE) %>% 
+    select("user_name","user_id","aoc_score","total_stars","day","star","timestamp"="completed_stars") %>%
+    filter(!is.na(star)) %>% 
+    group_by(user_name, user_id) |> 
+    mutate(
+      aoc_score = min(aoc_score),
+      total_stars = max(total_stars)
+    ) |> 
+    group_by(user_name, user_id, aoc_score, total_stars, day, star) |> 
+    summarise(
+      timestamp = min(timestamp)
+    ) |> 
+    ungroup() |> 
+    pivot_wider(names_from = star, values_from = timestamp, names_glue = "star{star}_ts") %>% 
+    mutate_at(c("star1_ts","star2_ts"),~ as.numeric(.x) %>% lubridate::as_datetime(tz = "America/Toronto")) %>% 
+    mutate(time_to_star2 = (star2_ts-star1_ts) %>% round(1)) %>% 
+    arrange(desc(as.numeric(day))) %>% 
+    select(user_name,total_stars,aoc_score,day,star1_ts,star2_ts,everything())  
+  
+  return(stars)
+}
 
-leaderboard <- stars %>% 
-  group_by(user_name,user_id,aoc_score,total_stars) %>% 
-  summarise(
-    median_star2 = median(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>%  round(1),
-    mean_star2 = mean(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>% round(1)) %>% 
-  ungroup() %>% 
-  arrange(desc(total_stars),mean_star2)
+get_leaderboard <- function(stars) {
+  
+  if(is.null(stars)) return(NULL)
+  
+  leaderboard <- stars %>% 
+    group_by(user_name,user_id,aoc_score,total_stars) %>% 
+    summarise(
+      median_star2 = median(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>%  round(1),
+      mean_star2 = mean(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>% round(1)) %>% 
+    ungroup() %>% 
+    arrange(desc(total_stars),mean_star2)  
+  
+  return(leaderboard)
+}
+
+stars <- get_stars()
+leaderboard <- get_leaderboard(stars)
+
 ```
 ```{r echo = FALSE, layout = "l-page", fig.width = 16, fig.height = 16}
-leaderboard |> 
-  select(
-    user_name,
-    total_stars,
-    mean_star2,
-    median_star2,
-    aoc_score
-  ) |> 
-  mutate(
-    rank = row_number(),
-    total_stars = format(total_stars),
-    aoc_score = format(aoc_score),
-    mean_star2 = format(mean_star2),
-    median_star2 = format(median_star2),
-    .before = 1
-  ) |> 
-reactable(
-  # leaderboard,
-  columns = list(
-    rank = colDef(name = "Rank", minWidth = 75, align = "left"),
-    user_name = colDef(name = "User Name", minWidth = 150, html = TRUE),
-    total_stars = colDef(name = "Total Stars",
-                         minWidth = 75,
-                         format = colFormat(suffix = fontawesome::fa("star", fill = "#FABC2A")),
-                         align = "center",
-                         html = TRUE
-                         ),
-    mean_star2 = colDef(name = "Mean Time", align = "right", minWidth = 75),
-    median_star2 = colDef(name = "Median Time", align = "right", minWidth = 75),
-    aoc_score = colDef(name = "AOC Score", minWidth = 75, align = "center")
-  ),
-  striped = TRUE,
-  highlight = TRUE,
-  resizable = TRUE,
-  compact = TRUE,
-  fullWidth = TRUE,
-  sortable = FALSE,
-  searchable = TRUE,
-  borderless = TRUE,
-  showSortIcon = FALSE,
-  defaultPageSize = 100,
-  pageSizeOptions = c(50,100,500),
-  showPageSizeOptions = TRUE
-)
+show_leaderboard <- function(leaderboard){
+  
+  if(is.null(leaderboard)) return("No stars completed yet!")
+  
+  leaderboard |> 
+    select(
+      user_name,
+      total_stars,
+      mean_star2,
+      median_star2,
+      aoc_score
+    ) |> 
+    mutate(
+      rank = row_number(),
+      total_stars = format(total_stars),
+      aoc_score = format(aoc_score),
+      mean_star2 = format(mean_star2),
+      median_star2 = format(median_star2),
+      .before = 1
+    ) |> 
+    reactable(
+      # leaderboard,
+      columns = list(
+        rank = colDef(name = "Rank", minWidth = 75, align = "left"),
+        user_name = colDef(name = "User Name", minWidth = 150, html = TRUE),
+        total_stars = colDef(name = "Total Stars",
+                             minWidth = 75,
+                             format = colFormat(suffix = fontawesome::fa("star", fill = "#FABC2A")),
+                             align = "center",
+                             html = TRUE
+        ),
+        mean_star2 = colDef(name = "Mean Time", align = "right", minWidth = 75),
+        median_star2 = colDef(name = "Median Time", align = "right", minWidth = 75),
+        aoc_score = colDef(name = "AOC Score", minWidth = 75, align = "center")
+      ),
+      striped = TRUE,
+      highlight = TRUE,
+      resizable = TRUE,
+      compact = TRUE,
+      fullWidth = TRUE,
+      sortable = FALSE,
+      searchable = TRUE,
+      borderless = TRUE,
+      showSortIcon = FALSE,
+      defaultPageSize = 100,
+      pageSizeOptions = c(50,100,500),
+      showPageSizeOptions = TRUE
+    )
+}
+show_leaderboard(leaderboard)
+
 ```
 
