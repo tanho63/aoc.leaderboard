@@ -26,6 +26,8 @@ suppressPackageStartupMessages({
   library(lubridate)
   library(fontawesome)
   library(httr)
+  library(jsonlite)
+  library(here)
   library(reactable)
 })
 
@@ -34,11 +36,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r echo = FALSE, layout = "l-page", fig.width = 16, fig.height = 16}
-stars <- httr::GET("https://adventofcode.com/2022/leaderboard/private/view/1032765.json",
-                   httr::accept_json(),
-                   httr::user_agent("rstats aoc leaderboard https://github.com/tanho63/aoc.leaderboard"),
-                   httr::set_cookies(session = Sys.getenv("AOC_COOKIE"))) %>% 
-  content() %>% 
+stars <- read_json(here::here("archives/2021.json")) %>% 
   as_tibble() %>% 
   hoist("members",
         "user_name"="name",
