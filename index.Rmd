@@ -48,17 +48,17 @@ get_stars <- function(){
           "completed_stars"="completion_day_level",
           "total_stars" = "stars"
     )
-  
+
   if(sum(stars$total_stars) == 0) {
     message("No stars completed yet!")
     return(NULL)
   }
   
-  stars <- stars |>   
+  stars1 <- stars |>   
     unnest_longer('completed_stars', indices_to = "day") %>% 
     unnest_longer("completed_stars", indices_to = "star") %>% 
-    unnest_longer("completed_stars", indices_include = FALSE) %>% 
-    select("user_name","user_id","aoc_score","total_stars","day","star","timestamp"="completed_stars") %>%
+    hoist(completed_stars, "timestamp" = "get_star_ts") |> 
+    select("user_name","user_id","aoc_score","total_stars","day","star","timestamp") %>%
     filter(!is.na(star)) %>% 
     group_by(user_name, user_id) |> 
     mutate(
@@ -76,7 +76,7 @@ get_stars <- function(){
     arrange(desc(as.numeric(day))) %>% 
     select(user_name,total_stars,aoc_score,day,star1_ts,star2_ts,everything())  
   
-  return(stars)
+  return(stars1)
 }
 
 get_leaderboard <- function(stars) {
