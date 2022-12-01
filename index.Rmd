@@ -9,7 +9,7 @@ Last updated: `r lubridate::now("EST")` EST
 
 ## About
 
-This leaderboard sorts by total number of stars and then by mean time between part one and part two of the puzzles. 
+This leaderboard sorts by total number of stars and then by median time between part one and part two of the puzzles. 
 
 The goal is to de-emphasize the effect of starting the puzzle closer to the midnight EST release time in favour of an efficient solution for part two (generally the harder of the two puzzles).
 
@@ -89,7 +89,7 @@ get_leaderboard <- function(stars) {
       median_star2 = median(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>%  round(1),
       mean_star2 = mean(time_to_star2,na.rm = TRUE) %>% `units<-`("mins") %>% round(1)) %>% 
     ungroup() %>% 
-    arrange(desc(total_stars),mean_star2)  
+    arrange(desc(total_stars),median_star2)  
   
   return(leaderboard)
 }
