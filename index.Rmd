@@ -47,7 +47,8 @@ get_stars <- function(){
           "aoc_score"="local_score",
           "completed_stars"="completion_day_level",
           "total_stars" = "stars"
-    )
+    ) |> 
+    filter(!is.na(user_name))
 
   if(sum(stars$total_stars) == 0) {
     message("No stars completed yet!")
