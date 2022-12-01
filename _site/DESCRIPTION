@@ -1,6 +1,6 @@
 Package: aoc.leaderboard
 Title: rstats AOC Leaderboard
-Version: 0.0.1
+Version: 0.0.2
 Authors@R: 
     person("Tan", "Ho", , "tan@tanho.ca", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8388-5155"))
@@ -14,6 +14,7 @@ Imports:
     distill (>= 1.2),
     dplyr (>= 1.0.7),
     fontawesome (>= 0.2.2),
+    here,
     httr (>= 1.4.2),
     jsonlite (>= 1.7.2),
     lubridate (>= 1.7.0),
