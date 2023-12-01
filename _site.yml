@@ -5,15 +5,15 @@ description: |
 output_dir: "_site"
 navbar:
   right:
-    - text: "2022 Leaderboard"
+    - text: "2023 Leaderboard"
       href: index.html
-    - text: "2022 Leaderboard"
+    - text: "2022"
       href: 2022.html
-    - text: "2021 Leaderboard"
+    - text: "2021"
       href: 2021.html
-    - text: "Advent of Code"
+    - text: "AdventOfCode.com"
       href: https://adventofcode.com
-    - text: "Repo"
+    - text: "Leaderboard Repo"
       href: https://github.com/tanho63/aoc.leaderboard
 output: distill::distill_article
 theme: theme.css
