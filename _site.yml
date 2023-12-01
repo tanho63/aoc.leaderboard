@@ -7,10 +7,12 @@ navbar:
   right:
     - text: "2022 Leaderboard"
       href: index.html
+    - text: "2022 Leaderboard"
+      href: 2022.html
     - text: "2021 Leaderboard"
       href: 2021.html
     - text: "Advent of Code"
-      href: https://adventofcode.com/2021
+      href: https://adventofcode.com
     - text: "Repo"
       href: https://github.com/tanho63/aoc.leaderboard
 output: distill::distill_article
